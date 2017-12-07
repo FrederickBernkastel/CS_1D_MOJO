@@ -1,0 +1,37 @@
+module shift (
+    input a[8],
+    input b[8],
+    input alufn[6],
+    output out[8]
+  ) {
+  
+var i;
+  
+  always {
+    // SHL (100000), SHR (100001), SRA (100011)
+    case(alufn[1:0]){
+      // SHL
+      
+      2b00:
+        out = a << b[2:0];// Not 3:0 because max number shift is by 7 bits
+      // SHR
+      2b01:
+        out = a >> b[2:0];
+      // SRA
+      2b11:
+        for (i=0;i<a.WIDTH;i++){
+          if(i<a.WIDTH-b){
+            out[i] = a[i+b[2:0]];
+          } else {
+            out[i] = a[a.WIDTH-1];
+          }
+        }
+      // Default
+      default:
+        out = 8b0;
+    }
+  }
+}
+
+        
+        

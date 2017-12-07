@@ -1,0 +1,154 @@
+//! **************************************************************************
+// Written by: Map P.20131013 on Wed Dec 06 13:38:19 2017
+//! **************************************************************************
+
+SCHEMATIC START;
+CONFIG VCCAUX = "3.3";
+COMP "moves_seg[0]" LOCATE = SITE "P50" LEVEL 1;
+COMP "moves_seg[1]" LOCATE = SITE "P51" LEVEL 1;
+COMP "moves_seg[2]" LOCATE = SITE "P57" LEVEL 1;
+COMP "moves_seg[3]" LOCATE = SITE "P58" LEVEL 1;
+COMP "moves_seg[4]" LOCATE = SITE "P66" LEVEL 1;
+COMP "moves_seg[5]" LOCATE = SITE "P67" LEVEL 1;
+COMP "moves_seg[6]" LOCATE = SITE "P74" LEVEL 1;
+COMP "moves_seg[7]" LOCATE = SITE "P75" LEVEL 1;
+COMP "start_button" LOCATE = SITE "P104" LEVEL 1;
+COMP "clk" LOCATE = SITE "P56" LEVEL 1;
+COMP "grid_led[10]" LOCATE = SITE "P21" LEVEL 1;
+COMP "grid_led[11]" LOCATE = SITE "P22" LEVEL 1;
+COMP "grid_led[12]" LOCATE = SITE "P23" LEVEL 1;
+COMP "grid_led[13]" LOCATE = SITE "P24" LEVEL 1;
+COMP "grid_led[14]" LOCATE = SITE "P26" LEVEL 1;
+COMP "grid_led[15]" LOCATE = SITE "P27" LEVEL 1;
+COMP "p1_wins" LOCATE = SITE "P78" LEVEL 1;
+COMP "p2_wins" LOCATE = SITE "P79" LEVEL 1;
+COMP "p1[0]" LOCATE = SITE "P80" LEVEL 1;
+COMP "p1[1]" LOCATE = SITE "P81" LEVEL 1;
+COMP "p1[2]" LOCATE = SITE "P82" LEVEL 1;
+COMP "p1[3]" LOCATE = SITE "P83" LEVEL 1;
+COMP "p2[0]" LOCATE = SITE "P92" LEVEL 1;
+COMP "p1[4]" LOCATE = SITE "P84" LEVEL 1;
+COMP "p2[1]" LOCATE = SITE "P94" LEVEL 1;
+COMP "p1[5]" LOCATE = SITE "P85" LEVEL 1;
+COMP "p2[2]" LOCATE = SITE "P95" LEVEL 1;
+COMP "p1[6]" LOCATE = SITE "P87" LEVEL 1;
+COMP "p2[3]" LOCATE = SITE "P97" LEVEL 1;
+COMP "p1[7]" LOCATE = SITE "P88" LEVEL 1;
+COMP "p2[4]" LOCATE = SITE "P98" LEVEL 1;
+COMP "p2[5]" LOCATE = SITE "P99" LEVEL 1;
+COMP "p2[6]" LOCATE = SITE "P100" LEVEL 1;
+COMP "p2[7]" LOCATE = SITE "P101" LEVEL 1;
+COMP "rst_n" LOCATE = SITE "P38" LEVEL 1;
+COMP "grid_led[0]" LOCATE = SITE "P7" LEVEL 1;
+COMP "grid_led[1]" LOCATE = SITE "P8" LEVEL 1;
+COMP "grid_led[2]" LOCATE = SITE "P9" LEVEL 1;
+COMP "grid_led[3]" LOCATE = SITE "P10" LEVEL 1;
+COMP "grid_led[4]" LOCATE = SITE "P11" LEVEL 1;
+COMP "grid_led[5]" LOCATE = SITE "P12" LEVEL 1;
+COMP "grid_led[6]" LOCATE = SITE "P14" LEVEL 1;
+COMP "grid_led[7]" LOCATE = SITE "P15" LEVEL 1;
+COMP "grid_led[8]" LOCATE = SITE "P16" LEVEL 1;
+COMP "grid_led[9]" LOCATE = SITE "P17" LEVEL 1;
+COMP "time_seg[0]" LOCATE = SITE "P29" LEVEL 1;
+COMP "time_seg[1]" LOCATE = SITE "P30" LEVEL 1;
+COMP "time_seg[2]" LOCATE = SITE "P32" LEVEL 1;
+COMP "time_seg[3]" LOCATE = SITE "P33" LEVEL 1;
+COMP "time_seg[4]" LOCATE = SITE "P34" LEVEL 1;
+COMP "time_seg[5]" LOCATE = SITE "P35" LEVEL 1;
+COMP "time_seg[6]" LOCATE = SITE "P40" LEVEL 1;
+COMP "time_seg[7]" LOCATE = SITE "P41" LEVEL 1;
+COMP "reset_button" LOCATE = SITE "P102" LEVEL 1;
+TIMEGRP clk = BEL "M_timer_q_0" BEL "M_timer_q_1" BEL "M_timer_q_2" BEL
+        "M_timer_q_3" BEL "M_timer_q_6" BEL "M_timer_q_4" BEL "M_timer_q_5"
+        BEL "M_timer_q_7" BEL "M_timer_q_8" BEL "M_timer_q_9" BEL
+        "M_timer_q_10" BEL "M_timer_q_13" BEL "M_timer_q_11" BEL
+        "M_timer_q_12" BEL "M_timer_q_14" BEL "M_timer_q_15" BEL
+        "M_timer_q_16" BEL "M_timer_q_17" BEL "M_timer_q_20" BEL
+        "M_timer_q_18" BEL "M_timer_q_19" BEL "M_timer_q_21" BEL
+        "M_timer_q_22" BEL "M_timer_q_23" BEL "M_timer_q_24" BEL
+        "M_timer_q_27" BEL "M_timer_q_25" BEL "M_timer_q_28" BEL
+        "M_timer_q_29" BEL "M_state_q_FSM_FFd1" BEL "M_state_q_FSM_FFd2" BEL
+        "M_timer_q_26" BEL "M_led_mem_q_0" BEL "M_led_mem_q_1" BEL
+        "M_led_mem_q_2" BEL "M_led_mem_q_3" BEL "M_led_mem_q_4" BEL
+        "M_led_mem_q_5" BEL "M_led_mem_q_6" BEL "M_led_mem_q_7" BEL
+        "M_led_mem_q_8" BEL "M_led_mem_q_9" BEL "M_led_mem_q_10" BEL
+        "M_led_mem_q_11" BEL "M_led_mem_q_12" BEL "M_led_mem_q_13" BEL
+        "M_led_mem_q_14" BEL "M_led_mem_q_15" BEL "clk_BUFGP/BUFG" BEL
+        "p2_last_move_ram/read_data_2" BEL "p2_last_move_ram/read_data_1" BEL
+        "p2_last_move_ram/read_data_0" BEL "p2_last_move_ram/ram_0_2" BEL
+        "p2_last_move_ram/ram_0_1" BEL "p2_last_move_ram/ram_0_0" BEL
+        "random_led_generator/M_leds_mem_q_15" BEL
+        "random_led_generator/M_leds_mem_q_14" BEL
+        "random_led_generator/M_leds_mem_q_13" BEL
+        "random_led_generator/M_leds_mem_q_12" BEL
+        "random_led_generator/M_leds_mem_q_11" BEL
+        "random_led_generator/M_leds_mem_q_10" BEL
+        "random_led_generator/M_leds_mem_q_9" BEL
+        "random_led_generator/M_leds_mem_q_8" BEL
+        "random_led_generator/M_leds_mem_q_7" BEL
+        "random_led_generator/M_leds_mem_q_6" BEL
+        "random_led_generator/M_leds_mem_q_5" BEL
+        "random_led_generator/M_leds_mem_q_4" BEL
+        "random_led_generator/M_leds_mem_q_3" BEL
+        "random_led_generator/M_leds_mem_q_2" BEL
+        "random_led_generator/M_leds_mem_q_1" BEL
+        "random_led_generator/M_leds_mem_q_0" BEL
+        "p2_hasmoved_ram/read_data_0" BEL "p2_hasmoved_ram/ram<0>_0" BEL
+        "reset_cond/M_stage_q_3" BEL "reset_cond/M_stage_q_2" BEL
+        "reset_cond/M_stage_q_1" BEL "reset_cond/M_stage_q_0" BEL
+        "p1_last_move_ram/read_data_2" BEL "p1_last_move_ram/read_data_1" BEL
+        "p1_last_move_ram/read_data_0" BEL "p1_last_move_ram/ram_0_2" BEL
+        "p1_last_move_ram/ram_0_1" BEL "p1_last_move_ram/ram_0_0" BEL
+        "translate_moves/M_xor_grid_q_15" BEL
+        "translate_moves/M_xor_grid_q_14" BEL
+        "translate_moves/M_xor_grid_q_13" BEL
+        "translate_moves/M_xor_grid_q_12" BEL
+        "translate_moves/M_xor_grid_q_11" BEL
+        "translate_moves/M_xor_grid_q_10" BEL "translate_moves/M_xor_grid_q_9"
+        BEL "translate_moves/M_xor_grid_q_8" BEL
+        "translate_moves/M_xor_grid_q_7" BEL "translate_moves/M_xor_grid_q_6"
+        BEL "translate_moves/M_xor_grid_q_5" BEL
+        "translate_moves/M_xor_grid_q_4" BEL "translate_moves/M_xor_grid_q_3"
+        BEL "translate_moves/M_xor_grid_q_2" BEL
+        "translate_moves/M_xor_grid_q_1" BEL "translate_moves/M_xor_grid_q_0"
+        BEL "p1_hasmoved_ram/read_data_0" BEL "p1_hasmoved_ram/ram<0>_0" BEL
+        "time_left/M_timer_q_28" BEL "time_left/M_timer_q_27" BEL
+        "time_left/M_timer_q_26" BEL "time_left/M_timer_q_25" BEL
+        "time_left/M_timer_q_24" BEL "time_left/M_timer_q_23" BEL
+        "time_left/M_timer_q_22" BEL "time_left/M_timer_q_21" BEL
+        "time_left/M_timer_q_20" BEL "time_left/M_timer_q_19" BEL
+        "time_left/M_timer_q_18" BEL "time_left/M_timer_q_17" BEL
+        "time_left/M_timer_q_16" BEL "time_left/M_timer_q_15" BEL
+        "time_left/M_timer_q_14" BEL "time_left/M_timer_q_13" BEL
+        "time_left/M_timer_q_12" BEL "time_left/M_timer_q_11" BEL
+        "time_left/M_timer_q_10" BEL "time_left/M_timer_q_9" BEL
+        "time_left/M_timer_q_8" BEL "time_left/M_timer_q_7" BEL
+        "time_left/M_timer_q_6" BEL "time_left/M_timer_q_5" BEL
+        "time_left/M_timer_q_4" BEL "time_left/M_timer_q_3" BEL
+        "time_left/M_timer_q_2" BEL "time_left/M_timer_q_1" BEL
+        "time_left/M_timer_q_0" BEL "sutd_generator/M_counter_q_0" BEL
+        "sutd_generator/M_counter_q_1" BEL "sutd_generator/M_counter_q_2" BEL
+        "sutd_generator/M_counter_q_3" BEL "sutd_generator/M_counter_q_4" BEL
+        "sutd_generator/M_counter_q_5" BEL "sutd_generator/M_counter_q_6" BEL
+        "sutd_generator/M_counter_q_7" BEL "sutd_generator/M_counter_q_8" BEL
+        "sutd_generator/M_counter_q_9" BEL "sutd_generator/M_counter_q_10" BEL
+        "sutd_generator/M_counter_q_11" BEL "sutd_generator/M_counter_q_12"
+        BEL "sutd_generator/M_counter_q_13" BEL
+        "sutd_generator/M_counter_q_14" BEL "sutd_generator/M_counter_q_15"
+        BEL "sutd_generator/M_counter_q_16" BEL
+        "sutd_generator/M_counter_q_17" BEL "sutd_generator/M_counter_q_18"
+        BEL "sutd_generator/M_counter_q_19" BEL
+        "sutd_generator/M_counter_q_20" BEL "sutd_generator/M_counter_q_21"
+        BEL "sutd_generator/M_counter_q_22" BEL
+        "sutd_generator/M_counter_q_23" BEL "sutd_generator/M_counter_q_24"
+        BEL "sutd_generator/M_counter_q_25" BEL
+        "sutd_generator/M_counter_q_26" BEL "sutd_generator/M_counter_q_27"
+        BEL "moves_left/move_ram/read_data_3" BEL
+        "moves_left/move_ram/read_data_2" BEL
+        "moves_left/move_ram/read_data_1" BEL
+        "moves_left/move_ram/read_data_0" BEL "moves_left/move_ram/ram_0_3"
+        BEL "moves_left/move_ram/ram_0_2" BEL "moves_left/move_ram/ram_0_1"
+        BEL "moves_left/move_ram/ram_0_0";
+TS_clk = PERIOD TIMEGRP "clk" 50 MHz HIGH 50%;
+SCHEMATIC END;
+

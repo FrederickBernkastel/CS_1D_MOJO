@@ -1,0 +1,25 @@
+module cmp (
+    input a[8],
+    input b[8],
+    input alufn[6],
+    output out[8]
+  ) {
+
+  always {
+    // CMPEQ (110011), CMPLT (110101), CMPLE (110111)
+    out[7:1] = 7b0;
+    case(alufn[2:1]){
+      // Compare Equal
+      2b01:
+        out[0] = a==b;
+      // Compare Less than
+      2b10:
+        out[0] = a<b;
+      // Compare less than or equal to
+      2b11:
+        out[0] = a<=b;
+      default:
+        out[0] = 1b0;
+    }
+  }
+}

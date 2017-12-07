@@ -1,0 +1,33 @@
+module sutd_generator (
+    input clk,           // clock
+    input rst,           // reset
+    input reset_button,  // Manual reset
+    output out[16]       // output to led grid
+  ) {
+
+  dff counter[28](.clk(clk), .rst(rst));
+  
+  always {
+    if (reset_button){
+      counter.d = 0;
+    }
+    case (counter.q[27:25]){
+      d0:
+        // output S
+        out = 16b1111110000111111;
+      d1:
+        // output U
+        out = 16b1111100110011001;
+      d2:
+        // output T
+        out = 16b0110011001101111;
+      d3:
+        // output D
+        out = 16b0111100110010111;
+      default:
+        // output nothing
+        out = ~16d0;
+    }
+    counter.d = counter.q+1;
+  }
+}

@@ -1,0 +1,8 @@
+INTSTYLE=pa
+INFILE=C:\Users\Frederic\Desktop\Computational_Structures\1D\1D game\work\planAhead\1D game\1D game.runs\impl_1\mojo_top_0_routed.ncd
+OUTFILE=C:\Users\Frederic\Desktop\Computational_Structures\1D\1D game\work\planAhead\1D game\1D game.runs\impl_1\mojo_top_0.bit
+FAMILY=Spartan6
+PART=xc6slx9-2tqg144
+WORKINGDIR=C:\Users\Frederic\Desktop\Computational_Structures\1D\1D game\work\planAhead\1D game\1D game.runs\impl_1
+LICENSE=WebPack
+USER_INFO=211399234_0_0_970

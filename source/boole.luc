@@ -1,0 +1,37 @@
+module boole (
+    input a[8],
+    input b[8],
+    input alufn[6],
+    output out[8]
+  ) {
+
+  // AND (011000), OR (011110), XOR (010110), XNOR (010110), NOR (011101), NAND (010011), A (011010)
+    always {
+    case(alufn[3:0]){
+      // AND
+      4b1000:
+        out= a & b;
+      // OR
+      4b1110:
+        out =a|b;
+      // XOR
+      4b0110:
+        out= a^b;
+      // XNOR
+      4b1001:
+        out= ~(a^b);
+      //NOR
+      4b1101:
+        out= ~(a|b);
+      //NAND
+      4b0011:
+        out= ~(a&b);
+      // A
+      4b1010:
+        out = a;
+      default:
+        out = 8b0;
+    } 
+    
+  }
+}

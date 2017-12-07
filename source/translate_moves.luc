@@ -1,0 +1,44 @@
+module translate_moves (
+    input clk,  // clock
+    input rst,  // reset
+    input p1[6],
+    input p2[6],
+    input p1_hasmoved,
+    input p2_hasmoved,
+    input input_grid[16],
+    output output_grid[16]
+  ) {
+
+
+  dff xor_grid[16](.clk(clk), .rst(rst));
+  alu aluA;
+  alu aluB;
+  always {
+    xor_grid.d[0] = (p1_hasmoved&&(( p1*4 <= 0 && 0 < (p1+1)*4 )||(p1>3 && p1[1:0]==0))) ^ (p2_hasmoved&&(( p2*4 <= 0 && 0 < (p2+1)*4 )||(p2>3 && p2[1:0]==0)));
+    xor_grid.d[1] = (p1_hasmoved&&(( p1*4 <= 1 && 1 < (p1+1)*4 )||(p1>3 && p1[1:0]==1))) ^ (p2_hasmoved&&(( p2*4 <= 1 && 1 < (p2+1)*4 )||(p2>3 && p2[1:0]==1)));
+    xor_grid.d[2] = (p1_hasmoved&&(( p1*4 <= 2 && 2 < (p1+1)*4 )||(p1>3 && p1[1:0]==2))) ^ (p2_hasmoved&&(( p2*4 <= 2 && 2 < (p2+1)*4 )||(p2>3 && p2[1:0]==2)));
+    xor_grid.d[3] = (p1_hasmoved&&(( p1*4 <= 3 && 3 < (p1+1)*4 )||(p1>3 && p1[1:0]==3))) ^ (p2_hasmoved&&(( p2*4 <= 3 && 3 < (p2+1)*4 )||(p2>3 && p2[1:0]==3)));
+    xor_grid.d[4] = (p1_hasmoved&&(( p1*4 <= 4 && 4 < (p1+1)*4 )||(p1>3 && p1[1:0]==0))) ^ (p2_hasmoved&&(( p2*4 <= 4 && 4 < (p2+1)*4 )||(p2>3 && p2[1:0]==0)));
+    xor_grid.d[5] = (p1_hasmoved&&(( p1*4 <= 5 && 5 < (p1+1)*4 )||(p1>3 && p1[1:0]==1))) ^ (p2_hasmoved&&(( p2*4 <= 5 && 5 < (p2+1)*4 )||(p2>3 && p2[1:0]==1)));
+    xor_grid.d[6] = (p1_hasmoved&&(( p1*4 <= 6 && 6 < (p1+1)*4 )||(p1>3 && p1[1:0]==2))) ^ (p2_hasmoved&&(( p2*4 <= 6 && 6 < (p2+1)*4 )||(p2>3 && p2[1:0]==2)));
+    xor_grid.d[7] = (p1_hasmoved&&(( p1*4 <= 7 && 7 < (p1+1)*4 )||(p1>3 && p1[1:0]==3))) ^ (p2_hasmoved&&(( p2*4 <= 7 && 7 < (p2+1)*4 )||(p2>3 && p2[1:0]==3)));
+    xor_grid.d[8] = (p1_hasmoved&&(( p1*4 <= 8 && 8 < (p1+1)*4 )||(p1>3 && p1[1:0]==0))) ^ (p2_hasmoved&&(( p2*4 <= 8 && 8 < (p2+1)*4 )||(p2>3 && p2[1:0]==0)));
+    xor_grid.d[9] = (p1_hasmoved&&(( p1*4 <= 9 && 9 < (p1+1)*4 )||(p1>3 && p1[1:0]==1))) ^ (p2_hasmoved&&(( p2*4 <= 9 && 9 < (p2+1)*4 )||(p2>3 && p2[1:0]==1)));
+    xor_grid.d[10] = (p1_hasmoved&&(( p1*4 <= 10 && 10 < (p1+1)*4 )||(p1>3 && p1[1:0]==2))) ^ (p2_hasmoved&&(( p2*4 <= 10 && 10 < (p2+1)*4 )||(p2>3 && p2[1:0]==2)));
+    xor_grid.d[11] = (p1_hasmoved&&(( p1*4 <= 11 && 11 < (p1+1)*4 )||(p1>3 && p1[1:0]==3))) ^ (p2_hasmoved&&(( p2*4 <= 11 && 11 < (p2+1)*4 )||(p2>3 && p2[1:0]==3)));
+    xor_grid.d[12] = (p1_hasmoved&&(( p1*4 <= 12 && 12 < (p1+1)*4 )||(p1>3 && p1[1:0]==0))) ^ (p2_hasmoved&&(( p2*4 <= 12 && 12 < (p2+1)*4 )||(p2>3 && p2[1:0]==0)));
+    xor_grid.d[13] = (p1_hasmoved&&(( p1*4 <= 13 && 13 < (p1+1)*4 )||(p1>3 && p1[1:0]==1))) ^ (p2_hasmoved&&(( p2*4 <= 13 && 13 < (p2+1)*4 )||(p2>3 && p2[1:0]==1)));
+    xor_grid.d[14] = (p1_hasmoved&&(( p1*4 <= 14 && 14 < (p1+1)*4 )||(p1>3 && p1[1:0]==2))) ^ (p2_hasmoved&&(( p2*4 <= 14 && 14 < (p2+1)*4 )||(p2>3 && p2[1:0]==2)));
+    xor_grid.d[15] = (p1_hasmoved&&(( p1*4 <= 15 && 15 < (p1+1)*4 )||(p1>3 && p1[1:0]==3))) ^ (p2_hasmoved&&(( p2*4 <= 15 && 15 < (p2+1)*4 )||(p2>3 && p2[1:0]==3)));
+    aluA.a = xor_grid.q[7:0];
+    aluA.b = input_grid[7:0];
+    aluA.alufn = 6b010110;
+    output_grid[7:0] = aluA.out;
+    
+    aluB.a = xor_grid.q[15:8];
+    aluB.b = input_grid[15:8];
+    aluB.alufn = 6b010110;
+    output_grid[15:8] = aluB.out;
+    
+  }
+}

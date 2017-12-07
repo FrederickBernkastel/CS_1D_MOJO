@@ -1,0 +1,45 @@
+module alu (
+    input a[8],
+    input b[8],
+    input alufn[8],
+    output out[8]
+  ) {
+  
+
+  add add;
+  boole boole;
+  shift shift;
+  cmp cmp;
+  always {
+    // Assign inputs to add,boole,shift,cmp modules
+    add.a = a;
+    add.b = b;
+    add.alufn = alufn[5-:6];
+    boole.a = a;
+    boole.b = b;
+    boole.alufn = alufn[5-:6];
+    shift.a = a;
+    shift.b = b;
+    shift.alufn = alufn[5-:6];
+    cmp.a = a;
+    cmp.b = b;
+    cmp.alufn = alufn[5-:6];
+    // Select ALU Operation
+    case (alufn[5-:2]) {
+      // Addition Operation
+      2b00:
+        out = add.out;
+      // Boole Operation
+      2b01:
+        out = boole.out;
+      // Shift Operation
+      2b10:
+        out = shift.out;
+      // CMP Operation
+      default:
+        out = cmp.out;
+    }
+    
+    
+  }
+}

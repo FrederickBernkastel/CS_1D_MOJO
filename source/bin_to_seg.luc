@@ -1,0 +1,33 @@
+module bin_to_seg (
+    input bin[4],
+    output out[8]
+  ) {
+  // Translates input binary to 7 segment number
+  always {
+    case(bin){
+      d0:
+        out = 8b00111111;
+      d1:
+        out = 8b00000110;
+      d2:
+        out = 8b01011011;
+      d3:
+        out = 8b01001111;
+      d4:
+        out = 8b01100110;
+      d5:
+        out = 8b01101101;
+      d6:
+        out = 8b01111101;
+      d7:
+        out = 8b00000111;
+      d8:
+        out = 8b01111111;
+      d9:
+        out = 8b01101111;
+      default:
+        out = 8d0;
+    }
+
+  }
+}

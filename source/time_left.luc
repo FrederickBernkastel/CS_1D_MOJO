@@ -1,0 +1,49 @@
+module time_left (
+    input clk,  // clock
+    input rst,  // reset
+    input reset_time,
+    output segments[8],
+    output times_up
+  ) {
+
+  dff timer[29](.clk(clk), .rst(rst));
+  bin_to_seg bin_to_seg;
+  always {
+    if (reset_time){
+      timer.d = c{4b1001,25x{1b1}};
+      bin_to_seg.bin = timer.q[28:25];
+      times_up=1b0;
+    } else {
+//      Change if ordering
+      /*
+      if (timer.q>0){
+        timer.d = timer.q - 1;
+        bin_to_seg.bin = timer.q[28:25];
+        times_up = 1b0;
+      } else {
+        timer.d = c{4b1111,25x{1b1}};
+        bin_to_seg.bin = 4b0;
+        times_up = 1b1;
+      }
+      */
+      if (timer.q[28:0]==29b0){
+        timer.d = c{4b1111,25x{1b1}};
+        bin_to_seg.bin = 4b0;
+        times_up = 1b1;
+      } else {
+                      
+          timer.d = timer.q - 1;
+          bin_to_seg.bin = timer.q[28:25];
+
+          if (timer.q==c{4b1111,25x{1b1}}){
+            times_up=1b1;
+          } else {
+            times_up = 1b0;
+          }
+      }
+      
+
+    }
+    segments = bin_to_seg.out;
+  }
+}

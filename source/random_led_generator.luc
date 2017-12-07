@@ -1,0 +1,166 @@
+module random_led_generator (
+    input clk,  // clock
+    input rst,  // reset
+    input randomize_trigger,
+    output leds[16]
+  ) {
+  
+  dff randomize[4](.clk(clk), .rst(rst));
+  dff leds_mem[16](#INIT(2x{8b10100101}),.clk(clk), .rst(rst));
+
+
+  
+  
+  
+ // Use dff buffer for different step
+ // Try using AND to pick out specific bits
+ // Cascading variable by constant shifts is OK a << 1 << 2
+ // Cascading variable by constant shifts is not OK (a >> 4) << 4
+ // Cascading constant by variable shifts is not OK
+    //  18b111111111100000000>>randomize_test.q; Shifts by 10 instead of 2
+    //  18b111111111100000000>>randomize_test.q; Shifts by 1 as expected
+ // Cascading by variable shifts triggers randomness ((leds_mem.q << 1) << randomize_test.q) + ...
+  
+  
+  always {
+    
+    randomize.d = randomize.q + 1;
+
+    /*
+    aluA.a = leds_mem.q[15:8];
+    aluA.b = 1;
+    aluA.alufn = 6b100000;
+    aluB.a = leds_mem.q[7:0];
+    aluB.b = 1;
+    aluB.alufn = 6b100000;
+    */
+
+    if (randomize_trigger){
+      // Triggers appending to the back if randomize.q[4]==1, else append to front
+      
+      //if (randomize.q[4]){
+//      leds_mem.d = ((leds_mem.q>>randomize.q[3:0])<<15) + ((leds_mem.q>>(5b0+randomize.q[3:0]+1))<<randomize.q[3:0]) + ((leds_mem.q<<(16-randomize.q[3:0]))>>(16-randomize.q[3:0]));
+//      leds_mem.d = ((leds_mem.q>>randomize.q[3:0])<<15) + ((leds_mem.q>>(5b0+randomize.q[3:0]+1))<<randomize.q[3:0]) + ((leds_mem.q<<(16-randomize.q[3:0]))>>(16-randomize.q[3:0]));
+/*
+      case(randomize.q[3:0]){
+        4b0000:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000000000001)<<15) + ((leds_mem.q[15:0]&16b1111111111111110)>>1) + (leds_mem.q[15:0]&16b0000000000000000);
+
+        4b0001:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000000000010)<<14) + ((leds_mem.q[15:0]&16b1111111111111100)>>1) + (leds_mem.q[15:0]&16b0000000000000001);
+        
+        4b0010:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000000000100)<<13) + ((leds_mem.q[15:0]&16b1111111111111000)>>1) + (leds_mem.q[15:0]&16b0000000000000011);
+        
+        4b0011:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000000001000)<<12) + ((leds_mem.q[15:0]&16b1111111111110000)>>1) + (leds_mem.q[15:0]&16b0000000000000111);
+        
+        4b0100:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000000010000)<<11) + ((leds_mem.q[15:0]&16b1111111111100000)>>1) + (leds_mem.q[15:0]&16b0000000000001111);
+        
+        4b0101:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000000100000)<<10) + ((leds_mem.q[15:0]&16b1111111111000000)>>1) + (leds_mem.q[15:0]&16b0000000000011111);
+        
+        4b0110:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000001000000)<<9) + ((leds_mem.q[15:0]&16b1111111110000000)>>1) + (leds_mem.q[15:0]&16b0000000000111111);
+        
+        4b0111:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000010000000)<<8) + ((leds_mem.q[15:0]&16b1111111100000000)>>1) + (leds_mem.q[15:0]&16b0000000001111111);
+        
+        4b1000:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000000100000000)<<7) + ((leds_mem.q[15:0]&16b1111111000000000)>>1) + (leds_mem.q[15:0]&16b0000000011111111);
+        
+        4b1001:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000001000000000)<<6) + ((leds_mem.q[15:0]&16b1111110000000000)>>1) + (leds_mem.q[15:0]&16b0000000111111111);
+        
+        4b1010:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000010000000000)<<5) + ((leds_mem.q[15:0]&16b1111100000000000)>>1) + (leds_mem.q[15:0]&16b0000001111111111);
+        
+        4b1011:
+          leds_mem.d=((leds_mem.q[15:0]&16b0000100000000000)<<4) + ((leds_mem.q[15:0]&16b1111000000000000)>>1) + (leds_mem.q[15:0]&16b0000011111111111);
+        
+        4b1100:
+          leds_mem.d=((leds_mem.q[15:0]&16b0001000000000000)<<3) + ((leds_mem.q[15:0]&16b1110000000000000)>>1) + (leds_mem.q[15:0]&16b0000111111111111);
+        
+        4b1101:
+          leds_mem.d=((leds_mem.q[15:0]&16b0010000000000000)<<2) + ((leds_mem.q[15:0]&16b1100000000000000)>>1) + (leds_mem.q[15:0]&16b0001111111111111);
+        
+        4b1110:
+          leds_mem.d=((leds_mem.q[15:0]&16b0100000000000000)<<1) + ((leds_mem.q[15:0]&16b1000000000000000)>>1) + (leds_mem.q[15:0]&16b0011111111111111);
+        
+        default:
+          leds_mem.d=((leds_mem.q[15:0]&16b1000000000000000)<<0) + ((leds_mem.q[15:0]&16b0000000000000000)>>1) + (leds_mem.q[15:0]&16b0111111111111111);
+      }
+      */
+    
+      case(randomize.q[3:0]){
+        4b0000:
+          leds_mem.d=16b1111000011110000;
+
+        4b0001:
+          leds_mem.d=16b1100110011001100;
+        
+        4b0010:
+          leds_mem.d=8x{2b10};
+        
+        4b0011:
+          leds_mem.d=16b1110000101110010;
+        
+        4b0100:
+          leds_mem.d=16b1100100101110010;
+        
+        4b0101:
+          leds_mem.d=16b1100101100110010;
+        
+        4b0110:
+          leds_mem.d=16b1101001011010010;
+        
+        4b0111:
+          leds_mem.d=16b1101001010110100;
+        
+        4b1000:
+          leds_mem.d=16b0000101101001111;
+        
+        4b1001:
+          leds_mem.d=16b0100101101001101;
+        
+        4b1010:
+          leds_mem.d=16b000110101100111;
+        
+        4b1011:
+          leds_mem.d=16b000110101101101;
+        
+        4b1100:
+          leds_mem.d=16b1111001000001101;
+        
+        4b1101:
+          leds_mem.d=16b1111001001100100;
+        
+        4b1110:
+          leds_mem.d=16b1011010101001010;
+        
+        default:
+          leds_mem.d=2x{8b10100101};
+      }
+      
+      //} else {
+      //leds_mem.d = ((leds_mem.q>>(randomize.q[3:0]+1))<<(randomize.q[3:0]+1)) + ((leds_mem.q<<(16-randomize.q[3:0]))>>(15-randomize.q[3:0])) + ((leds_mem.q<<(15-randomize.q[3:0]))>>15);
+      //}
+      
+    } else {
+      // TEST (x & const_mask)<<constant  Correct
+      //leds_mem.d = (randomize_test.q&16b0000111111110000)<<4;
+      // TEST multiplication
+      // Test usage of sig to cascade shift - Correct - Variable shifted by constant
+      // TEST usage of t
+      // Consider testing bitshift of 0
+        
+      
+      //leds_mem.d=((randomize_test.q[15:0]&16b0000000000100000)<<10) + ((randomize_test.q[15:0]&16b1111111111000000)>>1) + (randomize_test.q[15:0]&16b0000000000011111);
+      //leds_mem.d = randomize_test.q<<0;
+      leds_mem.d = (leds_mem.q << 1) + leds_mem.q[15];
+    }
+    
+    leds = leds_mem.q;
+  }
+}

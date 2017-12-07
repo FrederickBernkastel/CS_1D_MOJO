@@ -1,0 +1,62 @@
+module moves_left (
+    input clk,  // clock
+    //input rst,  // reset
+    input reset_moves,
+    input new_move,
+    output segments[8],
+    output last_move
+  ) {
+
+  simple_ram move_ram (#SIZE(4), #DEPTH(1));
+  bin_to_seg bin_to_seg;
+  always {
+    move_ram.clk = clk;
+    move_ram.address  = 1b0;
+    /*
+    // Change if Ordering
+    if (reset_moves==1b1){
+      move_ram.write_data = 4b1001;
+      move_ram.write_en = 1b1;
+    } else {
+      if (new_move==1b1) {
+        move_ram.write_data = move_ram.read_data - 1;
+        move_ram.write_en = 1b1;
+      } else {
+        move_ram.write_data = 1b0;
+        move_ram.write_en = 1b0;
+      }
+    }
+    */
+    if (new_move==1b1) {
+      move_ram.write_data = move_ram.read_data - 1;
+      move_ram.write_en = 1b1;
+    } else {
+      if (reset_moves==1b1){
+        move_ram.write_data = 4b1001;
+        move_ram.write_en = 1b1;
+      } else {
+        move_ram.write_data = 1b0;
+        move_ram.write_en = 1b0;
+      }
+    }
+    
+    /*
+    if (new_move){
+      move.d = move.q - 1;
+    } else {
+      if (reset_moves){
+        move.d = 4b1001;
+      } else {
+        move.d = move.q;
+      }
+    }
+    */
+    bin_to_seg.bin = move_ram.read_data;    
+    segments = bin_to_seg.out;
+    if (move_ram.read_data==0){
+       last_move = 1;
+    } else {
+       last_move=0;
+    }
+  }
+}

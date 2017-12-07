@@ -1,0 +1,30 @@
+module translate_winner (
+    input grid_led[16],
+    output p1_wins,
+    output p2_wins
+  ) {
+
+  alu aluA;
+  alu aluB;
+  always {
+      
+      aluA.a = 8b0+grid_led[0]+grid_led[1]+grid_led[2]+grid_led[3]+grid_led[4]+grid_led[5]+grid_led[6]+grid_led[7]+grid_led[8]+grid_led[9]+grid_led[10]+grid_led[11]+grid_led[12]+grid_led[13]+grid_led[14]+grid_led[15];
+      aluA.b = 8b0+!grid_led[0]+!grid_led[1]+!grid_led[2]+!grid_led[3]+!grid_led[4]+!grid_led[5]+!grid_led[6]+!grid_led[7]+!grid_led[8]+!grid_led[9]+!grid_led[10]+!grid_led[11]+!grid_led[12]+!grid_led[13]+!grid_led[14]+!grid_led[15];
+      aluA.alufn = 6b110111;
+      
+      aluB.a = 8b0+!grid_led[0]+!grid_led[1]+!grid_led[2]+!grid_led[3]+!grid_led[4]+!grid_led[5]+!grid_led[6]+!grid_led[7]+!grid_led[8]+!grid_led[9]+!grid_led[10]+!grid_led[11]+!grid_led[12]+!grid_led[13]+!grid_led[14]+!grid_led[15];
+      aluB.b = 8b0+grid_led[0]+grid_led[1]+grid_led[2]+grid_led[3]+grid_led[4]+grid_led[5]+grid_led[6]+grid_led[7]+grid_led[8]+grid_led[9]+grid_led[10]+grid_led[11]+grid_led[12]+grid_led[13]+grid_led[14]+grid_led[15];
+      aluB.alufn = 6b110111;
+    
+      if (aluB.out[0]==8b1){
+        p1_wins=1;
+      } else {
+        p1_wins = 0;
+      }
+      if (aluA.out[0]==8b1){
+        p2_wins = 1;
+      } else {
+        p2_wins = 0;
+      }
+  }
+}

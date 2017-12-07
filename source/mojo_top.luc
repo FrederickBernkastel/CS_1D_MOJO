@@ -1,0 +1,387 @@
+module mojo_top (
+    input clk,              // 50MHz clock
+    input rst_n,            // reset button (active low)
+    input p1[8],              // Player 1 move choice
+    input p2[8],              // Player 2 move choice
+    input reset_button,       // Trigger reset state
+    input start_button,       // Trigger start state iff reset state
+    
+    output grid_led[16],      // output to grid leds
+    output time_seg[8],       // output to time_left seven segment
+    output moves_seg[8],      // output to moves_left seven segment
+    output p1_wins,
+    output p2_wins
+  ) {
+  
+  sig rst;                  // reset signal
+  
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    .rst(rst){
+      fsm state = {IDLE,START,DISPLAY_RESULT};    // State machine
+      dff led_mem[16];
+      dff timer[30];
+
+      
+      
+      sutd_generator sutd_generator;
+      random_led_generator random_led_generator;
+      time_left time_left;
+      //moves_left moves_left;
+      translate_moves translate_moves;
+    }
+    moves_left moves_left;
+  }
+
+  translate_winner translate_winner;
+  
+  simple_ram p1_hasmoved_ram (#SIZE(1), #DEPTH(1));
+  simple_ram p1_last_move_ram (#SIZE(4), #DEPTH(1));
+  simple_ram p2_hasmoved_ram (#SIZE(1), #DEPTH(1));
+  simple_ram p2_last_move_ram (#SIZE(4), #DEPTH(1));
+
+  always {
+    reset_cond.in = ~rst_n;   // input raw inverted reset signal
+    rst = reset_cond.out;     // conditioned reset
+    
+    
+    // Set default values for ram clk and address
+    p1_hasmoved_ram.clk = clk;
+    p1_last_move_ram.clk = clk;
+    p2_hasmoved_ram.clk = clk;
+    p2_last_move_ram.clk = clk;
+    
+    p1_hasmoved_ram.address = 1b0;
+    p1_last_move_ram.address = 1b0;    
+    p2_hasmoved_ram.address = 1b0;
+    p2_last_move_ram.address = 1b0;
+    
+    
+    // If any button is pressed, randomize random_led_generator
+    if (c{p1[7:0],p2[7:0],reset_button,start_button}>0){
+      random_led_generator.randomize_trigger=1b1;
+    } else {
+      random_led_generator.randomize_trigger=1b0;
+    }
+    
+    // If reset button is pressed, immediately move to idle
+    if (reset_button){
+      sutd_generator.reset_button=1b1;
+    } else {
+      sutd_generator.reset_button = 1b0;
+    }
+    
+    translate_moves.input_grid = led_mem.q;
+    translate_moves.p1 = p1_last_move_ram.read_data;
+    translate_moves.p2 = p2_last_move_ram.read_data;
+    translate_moves.p1_hasmoved = p1_hasmoved_ram.read_data;
+    translate_moves.p2_hasmoved = p2_hasmoved_ram.read_data;
+    translate_winner.grid_led = led_mem.q;
+    
+
+    case (state.q) {
+      state.IDLE:
+        // Set unused outputs as defaults
+        grid_led = sutd_generator.out;
+        time_seg = 8d0;
+        moves_seg = 8d0;
+        p1_wins = 1b0;
+        p2_wins = 1b0;
+        timer.d=1b0;
+        
+        // Set unused module inputs as defaults
+        moves_left.new_move = 1b0;
+        p1_last_move_ram.write_en=1b0;
+        p1_last_move_ram.write_data=4b0;
+        p1_hasmoved_ram.write_en=1b0;
+        p1_hasmoved_ram.write_data=1b0;
+        p2_last_move_ram.write_en=1b0;
+        p2_last_move_ram.write_data=4b0;
+        p2_hasmoved_ram.write_en=1b0;
+        p2_hasmoved_ram.write_data=1b0;
+        
+                
+        led_mem.d = random_led_generator.leds;
+        
+        
+        time_left.reset_time = 1b1;
+        moves_left.reset_moves = 1b1;
+        if (start_button){
+          state.d = state.START;
+        } else {
+          state.d = state.IDLE;
+        }
+        
+      state.START:
+        // Set unused outputs as defaults
+        p1_wins = 1b0;
+        p2_wins = 1b0;
+        moves_left.reset_moves=1b0;
+        timer.d=1b0;
+        
+        
+        
+        if (moves_left.last_move){
+            state.d = state.DISPLAY_RESULT;
+
+            //Debug
+            time_left.reset_time = 1b0;
+            led_mem.d = led_mem.q;
+            moves_left.new_move=1b0;
+            p1_last_move_ram.write_en=1b0;
+            p1_last_move_ram.write_data=4b0;
+            p1_hasmoved_ram.write_en=1b0;
+            p1_hasmoved_ram.write_data=1b0;
+            p2_last_move_ram.write_en=1b0;
+            p2_last_move_ram.write_data=4b0;
+            p2_hasmoved_ram.write_en=1b0;
+            p2_hasmoved_ram.write_data=1b0;
+
+        } else {
+          if (reset_button==1b1){
+            state.d = state.IDLE;
+          }else{
+            state.d = state.START;
+          }
+          if (time_left.times_up) {
+              time_left.reset_time = 1b1;
+              led_mem.d = translate_moves.output_grid;
+              moves_left.new_move=1b1;
+              p1_last_move_ram.write_en=1b1;
+              p1_last_move_ram.write_data=4b0;
+              p1_hasmoved_ram.write_en=1b1;
+              p1_hasmoved_ram.write_data=1b0;
+              p2_last_move_ram.write_en=1b1;
+              p2_last_move_ram.write_data=4b0;
+              p2_hasmoved_ram.write_en=1b1;
+              p2_hasmoved_ram.write_data=1b0;
+
+          } else {
+              time_left.reset_time = 1b0;
+              led_mem.d = led_mem.q;
+              moves_left.new_move=1b0;
+              
+            
+            if (p1==8b00000000){
+              
+              p1_last_move_ram.write_en=1b0;
+              p1_last_move_ram.write_data=4b0;
+              p1_hasmoved_ram.write_en=1b0;
+              p1_hasmoved_ram.write_data=4b0;
+
+
+            } else {
+              
+              if (p1[0]){
+                p1_last_move_ram.write_en = 1b1;
+                p1_last_move_ram.write_data=4b0;
+                p1_hasmoved_ram.write_en = 1b1;
+                p1_hasmoved_ram.write_data = 1b1;
+              } else {
+                if (p1[1]){
+                  p1_last_move_ram.write_en = 1b1;
+                  p1_last_move_ram.write_data=4b1;
+                  p1_hasmoved_ram.write_en = 1b1;
+                  p1_hasmoved_ram.write_data = 1b1;
+                } else {
+                  if (p1[2]){
+                    p1_last_move_ram.write_en = 1b1;
+                    p1_last_move_ram.write_data=4b10;
+                    p1_hasmoved_ram.write_en = 1b1;
+                    p1_hasmoved_ram.write_data = 1b1;
+                  } else {
+                    if (p1[3]){
+                      p1_last_move_ram.write_en = 1b1;
+                      p1_last_move_ram.write_data=4b11;
+                      p1_hasmoved_ram.write_en = 1b1;
+                      p1_hasmoved_ram.write_data = 1b1;
+                    } else {
+                      if (p1[4]){
+                        p1_last_move_ram.write_en = 1b1;
+                        p1_last_move_ram.write_data=4b100;
+                        p1_hasmoved_ram.write_en = 1b1;
+                        p1_hasmoved_ram.write_data = 1b1;
+                      } else {
+                        if (p1[5]){
+                          p1_last_move_ram.write_en = 1b1;
+                          p1_last_move_ram.write_data=4b101;
+                          p1_hasmoved_ram.write_en = 1b1;
+                          p1_hasmoved_ram.write_data = 1b1;
+                        } else {
+                          if (p1[6]){
+                            p1_last_move_ram.write_en = 1b1;
+                            p1_last_move_ram.write_data=4b110;
+                            p1_hasmoved_ram.write_en = 1b1;
+                            p1_hasmoved_ram.write_data = 1b1;
+                          } else {
+                            if (p1[7]){
+                              p1_last_move_ram.write_en = 1b1;
+                              p1_last_move_ram.write_data=4b111;
+                              p1_hasmoved_ram.write_en = 1b1;
+                              p1_hasmoved_ram.write_data = 1b1;
+                            } else {
+                              // Trap, this should never be triggered
+                              p1_last_move_ram.write_en = 1b0;
+                              p1_last_move_ram.write_data=4b0;
+                              p1_hasmoved_ram.write_en = 1b0;
+                              p1_hasmoved_ram.write_data = 1b0;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            
+            if (p2==8b00000000){
+              p2_last_move_ram.write_en = 1b0;
+              p2_last_move_ram.write_data = 4b0;
+              p2_hasmoved_ram.write_en = 1b0;
+              p2_hasmoved_ram.write_data = 4b0;
+              
+            } else {
+              if (p2[0]){
+                p2_last_move_ram.write_en = 1b1;
+                p2_last_move_ram.write_data = 4b0;
+                p2_hasmoved_ram.write_en = 1b1;
+                p2_hasmoved_ram.write_data = 4b1;
+              } else {
+                if (p2[1]){
+                  p2_last_move_ram.write_en = 1b1;
+                  p2_last_move_ram.write_data = 4b1;
+                  p2_hasmoved_ram.write_en = 1b1;
+                  p2_hasmoved_ram.write_data = 4b1;
+                } else {
+                  if (p2[2]){
+                    p2_last_move_ram.write_en = 1b1;
+                    p2_last_move_ram.write_data = 4b10;
+                    p2_hasmoved_ram.write_en = 1b1;
+                    p2_hasmoved_ram.write_data = 4b1;
+                  } else {
+                    if (p2[3]){
+                      p2_last_move_ram.write_en = 1b1;
+                      p2_last_move_ram.write_data = 4b11;
+                      p2_hasmoved_ram.write_en = 1b1;
+                      p2_hasmoved_ram.write_data = 4b1;
+                    } else {
+                      if (p2[4]){
+                        p2_last_move_ram.write_en = 1b1;
+                        p2_last_move_ram.write_data = 4b100;
+                        p2_hasmoved_ram.write_en = 1b1;
+                        p2_hasmoved_ram.write_data = 4b1;
+                      } else {
+                        if (p2[5]){
+                          p2_last_move_ram.write_en = 1b1;
+                          p2_last_move_ram.write_data = 4b101;
+                          p2_hasmoved_ram.write_en = 1b1;
+                          p2_hasmoved_ram.write_data = 4b1;
+                        } else {
+                          if (p2[6]){
+                            p2_last_move_ram.write_en = 1b1;
+                            p2_last_move_ram.write_data = 4b110;
+                            p2_hasmoved_ram.write_en = 1b1;
+                            p2_hasmoved_ram.write_data = 4b1;
+                          } else {
+                            if (p2[7]){
+                              p2_last_move_ram.write_en = 1b1;
+                              p2_last_move_ram.write_data = 4b111;
+                              p2_hasmoved_ram.write_en = 1b1;
+                              p2_hasmoved_ram.write_data = 4b1;
+                            } else {
+                              // Trap, this should never be triggered
+                              p2_last_move_ram.write_en = 1b0;
+                              p2_last_move_ram.write_data = 4b0;
+                              p2_hasmoved_ram.write_en = 1b0;
+                              p2_hasmoved_ram.write_data = 4b0;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            
+
+          }
+        }
+        
+        time_seg = time_left.segments;
+        moves_seg = moves_left.segments;
+        grid_led = led_mem.q;
+      
+      state.DISPLAY_RESULT:
+        // Set unused outputs as defaults
+        time_seg = moves_left.segments;
+        moves_seg = moves_left.segments;
+        led_mem.d=led_mem.q;
+        p1_last_move_ram.write_en=1b0;
+        p1_last_move_ram.write_data=4b0;
+        p1_hasmoved_ram.write_en=1b0;
+        p1_hasmoved_ram.write_data=1b0;
+        p2_last_move_ram.write_en=1b0;
+        p2_last_move_ram.write_data=4b0;
+        p2_hasmoved_ram.write_en=1b0;
+        p2_hasmoved_ram.write_data=1b0;
+
+        
+        // Set unused module inputs as defaults
+        time_left.reset_time = 1b0;
+        moves_left.reset_moves = 1b0;
+        moves_left.new_move = 1b0;
+        
+        grid_led = led_mem.q;
+        timer.d = timer.q+1;
+        
+        
+        if (timer.q[26]) {
+          p1_wins = translate_winner.p1_wins;
+          p2_wins = translate_winner.p2_wins;
+        } else {
+          p1_wins = 1b0;
+          p2_wins = 1b0;
+        }
+        if (timer.q[29:27]>=7){
+          state.d = state.IDLE;
+        } else {
+          if (reset_button==1b0){
+            state.d = state.DISPLAY_RESULT;
+          } else {
+            state.d = state.IDLE;
+          }
+        }
+        
+      // will NEVER get triggered
+      default:
+        grid_led = 16bxxxxxxxxxxxx;
+        time_seg = 8bxxxxxxx;
+        moves_seg = 8bxxxxxxx;
+        p1_wins = 1bx;
+        p2_wins = 1bx;
+        timer.d = 1b0;
+        p1_last_move_ram.write_en=1b0;
+        p1_last_move_ram.write_data=4b0;
+        p1_hasmoved_ram.write_en=1b0;
+        p1_hasmoved_ram.write_data=1b0;
+        p2_last_move_ram.write_en=1b0;
+        p2_last_move_ram.write_data=4b0;
+        p2_hasmoved_ram.write_en=1b0;
+        p2_hasmoved_ram.write_data=1b0;
+
+
+        led_mem.d = 16b0;
+        
+        time_left.reset_time = 1bx;
+        moves_left.reset_moves = 1bx;
+        moves_left.new_move = 1bx;
+    }
+    
+    
+    
+  }
+}
